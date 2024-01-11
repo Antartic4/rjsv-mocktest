@@ -1,13 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Raleway', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.select-box {
+  width: 100%;
+  height: 40px;
+  padding: 8px;
+  font-size: 12px;
+  border: 2px solid #cbd5e0;
+  border-radius: 0.5rem;
+  background-color: white;
+}
+
+.select-box::-ms-expand {
+  display: none;
+}
+
+.testing-center > div {
+  margin-right: 10px;
+}
+
+.drag-active-class {
+  background-color: #f0f0f0;
+}
+
+#default-checkbox {
+  display: none;
+}
+
+input[type='radio'] {
+  accent-color: #172554;
+}
+
+#default-checkbox + label {
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+#default-checkbox:checked + label {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+#default-checkbox:checked + label svg {
+  display: block;
+}
+
+.font-superbold {
+  font-weight: 900;
+}
+
+#default-checkbox:checked + label::before {
+  content: '';
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  background-color: #4299e1;
+  border-radius: 50%;
+  top: 5%;
+  left: 5%;
+  transition: background-color 0.3s;
+}
+
+#default-checkbox + label svg {
+  display: none;
 }
