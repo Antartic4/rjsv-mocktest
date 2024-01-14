@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       fontFamily: {
         raleway: ['Raleway', 'san-serif'],
+        nunito: ['Nunito', 'san-sserif'],
       },
       fontWeight: {
         normal: 400,
@@ -13,6 +14,14 @@ module.exports = {
         bold: 700,
         extrabold: 800,
         black: 900,
+      },
+      screens: {
+        xs: '480px',
+        sm: '640px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1280px',
+        '2xl': '1536px',
       },
     },
   },

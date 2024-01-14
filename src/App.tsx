@@ -4,26 +4,28 @@ import DocumentUploadModal from './components/DocumentUpload';
 
 const App: React.FC = () => {
   return (
-    <div className="bg-[#9c9c9c] App">
+    <html className="App bg-[#9c9c9c] ">
+      {/* Note: The head tags should typically be in the index.html file of a React app */}
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
+          crossOrigin=""
         />
         <link
           href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800;900&display=swap"
           rel="stylesheet"
         />
+        <title>RJSV</title>
       </head>
       <div
-        className="h-screen xl:w-3/4"
-        style={{ display: 'block', margin: 'auto' }}
+        className="flex items-center justify-center h-screen"
+        style={{ backgroundColor: '#9c9c9c' }}
       >
         <DocumentUploadModal />
       </div>
-    </div>
+    </html>
   );
 };
 

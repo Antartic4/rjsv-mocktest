@@ -11,6 +11,7 @@ const DocumentUploadModal: React.FC = () => {
   const [fileData, setFileData] = useState<FileData | null>(null);
   const [isChecked, setIsChecked] = useState<boolean>(true);
   const [clientType, setClientType] = useState<'single' | 'multiple'>('single');
+  const [formData, setFormData] = useState(new FormData());
 
   // handlers
   // file change
@@ -36,7 +37,27 @@ const DocumentUploadModal: React.FC = () => {
         name: file.name,
         size: file.size / (1024 * 1024),
       });
+
+      // Update formData
+      const newFormData = new FormData();
+      newFormData.append('file', file);
+      newFormData.append('fileName', file.name);
+      newFormData.append('fileSize', (file.size / (1024 * 1024)).toString());
+      setFormData(newFormData);
+
+      logFormData(newFormData);
     }
+  };
+
+  // Shortens name in case it's too long.
+  const formatFileName = (name: string): string => {
+    const maxLength = 30;
+    const extension = name.split('.').pop()?.toLowerCase() || '';
+    let shortName = name.split('.').slice(0, -1).join('.');
+    if (shortName.length > maxLength) {
+      shortName = shortName.substring(0, maxLength) + '...';
+    }
+    return `${shortName}.${extension}`;
   };
 
   // handle drag
@@ -47,6 +68,7 @@ const DocumentUploadModal: React.FC = () => {
 
   // handle drag-in
   const handleDragIn = (event: DragEvent<HTMLDivElement>) => {
+    console.log('HandleDragIn active');
     event.preventDefault();
     event.stopPropagation();
     if (event.dataTransfer.items && event.dataTransfer.items.length > 0) {
@@ -54,8 +76,15 @@ const DocumentUploadModal: React.FC = () => {
     }
   };
 
+  const logFormData = (formData: FormData) => {
+    formData.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });
+  };
+
   // handle drag-out
   const handleDragOut = (event: DragEvent<HTMLDivElement>) => {
+    console.log('handleDragOut active.');
     event.preventDefault();
     event.stopPropagation();
     setDragging(false);
@@ -63,17 +92,43 @@ const DocumentUploadModal: React.FC = () => {
 
   // handle drop
   const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+    console.log('handleDrop');
     event.preventDefault();
     event.stopPropagation();
     setDragging(false);
+
     if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
-      handleFileChange(event as unknown as ChangeEvent<HTMLInputElement>);
+      const file = event.dataTransfer.files[0];
+      const reader = new FileReader();
+
+      reader.onloadstart = () => {
+        setFileProgress(0);
+      };
+
+      reader.onprogress = (event: ProgressEvent<FileReader>) => {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 100;
+          setFileProgress(progress);
+        }
+      };
+
+      reader.readAsDataURL(file);
+
+      setFileData({
+        name: file.name,
+        size: file.size / (1024 * 1024),
+      });
+
+      const newFormData = new FormData();
+      newFormData.append('file', file);
+      setFormData(newFormData);
+
       event.dataTransfer.clearData();
     }
   };
-
   // handle client type change
   const handleClientTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
+    console.log('handleClientTypeChange');
     setClientType(event.target.value as 'single' | 'multiple');
   };
 
@@ -82,93 +137,82 @@ const DocumentUploadModal: React.FC = () => {
 
   const clientBox = (number: number): JSX.Element[] => {
     let tempBuild: JSX.Element[] = [];
-
     for (let i = 0; i < number; i++) {
       tempBuild.push(
-        <div key={i} className="flex items-center justify-between py-1">
-          <h1 className="pr-3 text-sm font-medium whitespace-nowrap">
+        <div
+          key={i}
+          className="flex items-center justify-between py-2 text-[#1f3f6c]"
+        >
+          <h1 className="pr-3 text-xs font-medium whitespace-nowrap">
             Testing Center {i + 1}
           </h1>
           <div className="flex items-center">
             <select
               className="select-box"
               defaultValue=""
-              style={{
-                fontSize: '0.875rem',
-                lineHeight: '1.25rem',
-                fontWeight: 'normal',
-                width: '150px',
-              }}
-            ></select>
+              aria-label="Select Client"
+            >
+              <option value="" disabled hidden>
+                Select Client
+              </option>
+              <option
+                className="p-2 text-base font-bold text-center"
+                value="Client-1"
+              >
+                Client-1
+              </option>
+              <option
+                className="p-2 text-base font-bold text-center"
+                value="Client-2"
+              >
+                Client-2
+              </option>
+              <option
+                className="p-2 text-base font-bold text-center"
+                value="Client-3"
+              >
+                Client-3
+              </option>
+              <option
+                className="p-2 text-base font-bold text-center"
+                value="Client-4"
+              >
+                Client-4
+              </option>
+              <option
+                className="p-2 text-base font-bold text-center"
+                value="Client-5"
+              >
+                Client-5
+              </option>
+            </select>
+
+            <div className="ml-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+            </div>
           </div>
         </div>
       );
     }
-    return tempBuild.map((item, i) => (
-      <div key={i} className="flex items-center justify-between py-2">
-        <h1 className="pr-3 text-xs font-medium whitespace-nowrap">
-          Testing Center {i + 1}
-        </h1>
-        <div className="flex items-center">
-          <select
-            className="text-xs select-box"
-            defaultValue=""
-            style={{ width: '150px' }}
-          >
-            <option value="" disabled hidden>
-              Select Client
-            </option>
-            <option
-              className="p-2 text-base font-bold text-center"
-              value="Client-1"
-            >
-              Client-1
-            </option>
-            <option
-              className="p-2 text-base font-bold text-center"
-              value="Client-2"
-            >
-              Client-2
-            </option>
-            <option
-              className="p-2 text-base font-bold text-center"
-              value="Client-3"
-            >
-              Client-3
-            </option>
-            <option
-              className="p-2 text-base font-bold text-center"
-              value="Client-4"
-            >
-              Client-4
-            </option>
-            <option
-              className="p-2 text-base font-bold text-center"
-              value="Client-5"
-            >
-              Client-5
-            </option>
-          </select>
+    return tempBuild;
+  };
 
-          <div className="ml-1">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-              />
-            </svg>
-          </div>
-        </div>
-      </div>
-    ));
+  const openFileDialog = () => {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    fileInput.click();
   };
 
   return (
@@ -182,18 +226,18 @@ const DocumentUploadModal: React.FC = () => {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                className="text-white w-7 h-7"
+                className="flex items-center justify-center w-6 h-6 text-white"
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={1}
+                  strokeWidth={1.5}
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
             </div>
           </div>
-          <span className="pb-3 text-3xl font-extrabold leading-6 border-b text-[#1f3f6c]">
+          <span className="pb-3 text-2xl font-bold leading-6 border-b text-[#1f3f6c]">
             Document Upload
           </span>
           <div className="pt-5"></div>
@@ -202,30 +246,42 @@ const DocumentUploadModal: React.FC = () => {
             {/* 1 space */}
             <div className="col-span-1"></div>
             {/* 6 spaces */}
-            <div className="col-span-6 pr-6">
-              <div className="space-y-6">
-                <div className="">
+
+            <div className="col-span-10 pr-6 md:col-span-6">
+              <div className="space-y-4">
+                <div>
                   <select
                     className="font-extrabold select-box"
                     defaultValue=""
                     style={{
-                      fontSize: '0.875rem',
-                      lineHeight: '1.25rem',
+                      fontSize: '0.8rem',
                       fontWeight: 'bold',
+                      color: '#1f3f6c',
                     }}
                   >
                     <option value="" disabled hidden>
                       Select Import Name:
                     </option>
-                    <option value="Import name #1">Import name #1</option>
-                    <option value="Import name #2">Import name #2</option>
-                    <option value="Import name #3">Import name #3</option>
-                    <option value="Import name #4">Import name #4</option>
-                    <option value="Import name #5">Import name #5</option>
+                    <option value="import_name_1" className="text-lg">
+                      Import name #1
+                    </option>
+                    <option value="import_name_2" className="text-lg">
+                      Import name #2
+                    </option>
+                    <option value="import_name_3" className="text-lg">
+                      Import name #3
+                    </option>
+                    <option value="import_name_4" className="text-lg">
+                      Import name #4
+                    </option>
+                    <option value="import_name_5" className="text-lg">
+                      Import name #5
+                    </option>
                   </select>
                 </div>
-                <div className="text-start">
-                  <label className="text-sm font-extrabold text-[#1f3f6c] label-separate">
+                <div className="w-1/2 border-t border-b"></div>
+                <div className="text-left">
+                  <label className="text-xs font-bold text-[#1f3f6c]">
                     Select a manifest that you'd like to import
                   </label>
                   <div className="py-1.5"></div>
@@ -234,61 +290,62 @@ const DocumentUploadModal: React.FC = () => {
                       onDragEnter={handleDragIn}
                       onDragLeave={handleDragOut}
                       onDragOver={handleDrag}
+                      onChange={handleFileChange}
                       onDrop={handleDrop}
-                      className={`flex items-center justify-center w-full ${
+                      onClick={openFileDialog}
+                      className={`flex flex-col items-center z-50 justify-center w-full p-4 border-2 border-dashed rounded-lg hover:bg-gray-100 hover:border-gray-300 ${
                         dragging ? 'drag-active-class' : ''
                       }`}
                     >
-                      <label className="w-full h-24 p-4 border-2 border-dashed rounded-lg hover:bg-gray-100 hover:border-gray-300">
-                        <div className="-pb-10">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="20px"
-                            height="40px"
-                            viewBox="0 0 100 120"
-                            fill="none"
-                            style={{ display: 'block', margin: 'auto' }}
-                          >
-                            <rect
-                              x="10"
-                              y="10"
-                              width="80"
-                              height="100"
-                              fill="#F59E0B"
-                            />
+                      <input
+                        id="fileInput"
+                        type="file"
+                        style={{ display: 'none' }}
+                        onChange={handleFileChange}
+                      />
+                      <div className="-pb-10">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20px"
+                          height="40px"
+                          viewBox="0 0 100 120"
+                          fill="none"
+                          style={{ display: 'block', margin: 'auto' }}
+                        >
+                          <rect
+                            x="10"
+                            y="10"
+                            width="80"
+                            height="100"
+                            fill="#F59E0B"
+                          />
 
-                            <polygon points="70,10 90,10 90,30" fill="white" />
+                          <polygon points="70,10 90,10 90,30" fill="white" />
 
-                            <rect
-                              x="30.0"
-                              y="70"
-                              width="40"
-                              height="6"
-                              fill="#FFFFFF"
-                            />
-                            <rect
-                              x="30.0"
-                              y="85"
-                              width="40"
-                              height="6"
-                              fill="#FFFFFF"
-                            />
-                          </svg>
-                          <div className="flex items-center justify-center gap-1">
-                            <span className="font-semibold text-[#1f3f6c]">
-                              Drag & Drop Here Or
-                            </span>
-                            <span className="font-bold text-[#1f3f6c]">
-                              Browse
-                            </span>
-                          </div>
+                          <rect
+                            x="30.0"
+                            y="70"
+                            width="40"
+                            height="6"
+                            fill="#FFFFFF"
+                          />
+                          <rect
+                            x="30.0"
+                            y="85"
+                            width="40"
+                            height="6"
+                            fill="#FFFFFF"
+                          />
+                        </svg>
+                        <div className="z-0 flex items-center justify-center gap-1 text-xs">
+                          <span className="font-semibold text-[#1f3f6c]">
+                            Drag & Drop Here Or
+                          </span>
+                          <span className="font-extrabold text-[#1f3f6c]">
+                            Browse
+                          </span>
                         </div>
-                        <input
-                          type="file"
-                          className="opacity-0"
-                          onChange={handleFileChange}
-                        />
-                      </label>
+                      </div>
                     </div>
 
                     <div className="flex flex-col items-center mt-4">
@@ -302,7 +359,7 @@ const DocumentUploadModal: React.FC = () => {
 
               <div>
                 {fileData && (
-                  <div className="flex items-center justify-between mt-4 border-t file-preview">
+                  <div className="flex items-center justify-between mt-4 border-t border-b">
                     <div className="flex items-center flex-1 gap-4">
                       <span className="p-3">
                         <svg
@@ -340,15 +397,17 @@ const DocumentUploadModal: React.FC = () => {
                       </span>
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-300">{fileData.name}</span>
-                          <span className="text-xs font-extrabold text-gray-600">
+                          <span className="w-3/4 overflow-hidden text-sm text-gray-300 text-start whitespace-nowrap">
+                            {formatFileName(fileData.name)}
+                          </span>
+                          <span className="text-xs font-bold text-gray-400">
                             {fileData.size.toFixed(2)} MB
                           </span>
                         </div>
                         {fileProgress > 0 && (
                           <div className="w-full h-2 mt-2 ">
                             <div
-                              className="h-full bg-[#F59E0B]"
+                              className="h-1/2 bg-[#F59E0B]"
                               style={{ width: `${fileProgress}%` }}
                             ></div>
                           </div>
@@ -358,10 +417,9 @@ const DocumentUploadModal: React.FC = () => {
                   </div>
                 )}
               </div>
-              <div className="pb-4 text-left border-t border-gray-300">
-                <br />
-                <div className="w-1/2 border-t border-b"></div>
-                <h1 className="pt-4 text-sm font-extrabold text-[#1f3f6c]">
+              <div className="pb-4 text-left">
+                <div className="w-1/2 pt-4 border-t border-b"></div>
+                <h1 className="pt-2 text-sm font-extrabold text-[#1f3f6c]">
                   Elapse Data Checking:
                 </h1>
                 <h1 className="pt-2 text-sm font-semibold">
@@ -379,7 +437,7 @@ const DocumentUploadModal: React.FC = () => {
                 <h1 className="pt-2 text-sm font-extrabold text-[#1f3f6c]">
                   Tolerance Window:
                 </h1>
-                <div className="flex justify-start gap-3 pt-4">
+                <div className="flex justify-start gap-3 pt-2">
                   <div>
                     <h1 className="text-base font-semibold">
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -422,10 +480,15 @@ const DocumentUploadModal: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="col-span-4">
-              <div className="px-4 overflow-x-auto">
+            <div className="xs:col-span-1 md:hidden"></div>
+            <div className="xs:col-span-1 md:hidden"></div>
+            <div className="md:col-span-4 xs:col-span-10">
+              <div
+                className="xs:px-0 md:px-4 xs:pt-3 md:pt-0"
+                style={{ overflowX: 'visible', whiteSpace: 'nowrap' }}
+              >
                 <div className="text-left border-gray-300">
-                  <h1 className="pb-1 text-sm font-extrabold text-[#1f3f6c] ">
+                  <h1 className="pb-1 text-sm font-bold text-[#1f3f6c] ">
                     Split schedule using social distancing?
                   </h1>
                   <div className="flex items-center justify-start gap-2 pb-2">
