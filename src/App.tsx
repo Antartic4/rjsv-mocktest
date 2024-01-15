@@ -19,10 +19,7 @@ const App: React.FC = () => {
         />
         <title>RJSV</title>
       </head>
-      <div
-        className="flex items-center justify-center h-screen"
-        style={{ backgroundColor: '#9c9c9c' }}
-      >
+      <div className="flex justify-center w-full">
         <DocumentUploadModal />
       </div>
     </html>
