@@ -100,7 +100,7 @@ const DocumentUploadModal: React.FC = () => {
           </h1>
           <div className="flex items-center">
             <select
-              className=" select-box"
+              className="select-box-2"
               defaultValue=""
               onChange={handleImportNameChange}
               style={{
