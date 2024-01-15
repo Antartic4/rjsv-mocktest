@@ -15,11 +15,11 @@ const ClientTypeSelector: React.FC<ClientTypeSelectorProps> = ({
   ];
 
   return (
-    <div className="flex items-center justify-start gap-2">
+    <div className="flex items-center justify-start gap-1">
       {options.map((option) => (
         <div
           key={option.value}
-          className="flex items-center justify-center gap-2"
+          className="flex items-center justify-center gap-1"
         >
           <input
             type="radio"
@@ -27,9 +27,9 @@ const ClientTypeSelector: React.FC<ClientTypeSelectorProps> = ({
             name="clientType"
             checked={clientType === option.value}
             onChange={onClientTypeChange}
-            className="w-10 h-10"
+            className="w-8 h-8"
           />
-          <label className="w-full text-sm font-medium text-[#1f3f6c]">
+          <label className="w-full text-xs font-medium text-[#1f3f6c]">
             {option.label}
           </label>
         </div>

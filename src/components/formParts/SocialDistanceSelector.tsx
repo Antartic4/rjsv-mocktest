@@ -9,7 +9,7 @@ const SocialDistancingSchedule: React.FC = () => {
 
   return (
     <div>
-      <h1 className="pb-1 text-sm font-bold text-[#1f3f6c]">
+      <h1 className="pb-0.5 text-xs font-bold text-[#1f3f6c]">
         Split schedule using social distancing?
       </h1>
       <div className="flex items-center justify-start gap-2 pb-2">

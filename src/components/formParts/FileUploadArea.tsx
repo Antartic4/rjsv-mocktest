@@ -76,7 +76,7 @@ const FileUploadArea: React.FC<FileUploadAreaProps> = ({
   };
 
   return (
-    <div className="w-full p-4 border-2 border-gray-300 rounded-2xl">
+    <div className="w-full p-3 border-2 border-gray-300 rounded-2xl">
       <div
         onDragEnter={handleDragIn}
         onDragLeave={handleDragOut}
@@ -94,7 +94,7 @@ const FileUploadArea: React.FC<FileUploadAreaProps> = ({
           style={{ display: 'none' }}
           onChange={handleFileChange}
         />
-        <div className="-pb-10">
+        <div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20px"
@@ -120,7 +120,7 @@ const FileUploadArea: React.FC<FileUploadAreaProps> = ({
       </div>
 
       <div className="flex flex-col items-center mt-4">
-        <button className="w-1/2 px-4 py-1 text-sm font-extrabold text-gray-300 rounded-md bg-[#1f3f6c] hover:bg-blue-900">
+        <button className="w-1/2 px-4 py-1 text-sm font-semibold text-gray-300 rounded-md bg-[#1f3f6c] hover:bg-blue-900">
           Upload Manifest
         </button>
       </div>

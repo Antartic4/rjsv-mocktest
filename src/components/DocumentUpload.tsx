@@ -3,17 +3,27 @@ import ClientTypeSelector from './formParts/ClientTypeSelector';
 import FileUploadArea from './formParts/FileUploadArea';
 import SocialDistancingSchedule from './formParts/SocialDistanceSelector';
 import LocationChecking from './formParts/LocationChecking';
+import ToleranceWindow from './formParts/ToleranceWindow';
 
 interface FileData {
   name: string;
   size: number;
 }
 
+const clientOptions = [
+  { id: 1, label: 'Client #1' },
+  { id: 2, label: 'Client #2' },
+  { id: 3, label: 'Client #3' },
+  { id: 4, label: 'Client #4' },
+  { id: 5, label: 'Client #5' },
+];
+
 const importOptions = [
-  {
-    id: 1,
-    label: 'Import Name #1',
-  },
+  { id: 1, label: 'Import#1' },
+  { id: 2, label: 'Import#2' },
+  { id: 3, label: 'Import#3' },
+  { id: 4, label: 'Import#4' },
+  { id: 5, label: 'Import#5' },
 ];
 
 const DocumentUploadModal: React.FC = () => {
@@ -21,8 +31,31 @@ const DocumentUploadModal: React.FC = () => {
   const [fileData, setFileData] = useState<FileData | null>(null);
   const [clientType, setClientType] = useState<'single' | 'multiple'>('single');
   const [formData, setFormData] = useState(new FormData());
+  const [selectedImportName, setSelectedImportName] = useState<string>('');
+  const [socialDistancing, setSocialDistancing] = useState<string>('');
+  const [initialIsChecked, setInitialIsChecked] = useState<boolean>(false);
 
   // handlers
+
+  const handleSubmit = () => {
+    const fileDataString = fileData
+      ? `File Name: ${fileData.name} \nFile Size: ${fileData.size.toFixed(
+          2
+        )} MB`
+      : 'No file uploaded';
+
+    const socialDistancingStatus = socialDistancing === 'yes' ? 'Yes' : 'No';
+    const clientTypeString = clientType === 'single' ? 'Single' : 'Multiple';
+
+    alert(
+      `Import Name: ${selectedImportName}\n` +
+        `${fileDataString}\n` +
+        `Elapse Data Check: Clear\n` +
+        `Split Schedule: ${socialDistancingStatus}\n` +
+        `Location: All Available\n` +
+        `Client Type: ${clientTypeString}`
+    );
+  };
 
   // Shortens name in case it is too long.
   const formatFileName = (name: string): string => {
@@ -39,6 +72,11 @@ const DocumentUploadModal: React.FC = () => {
   const handleClientTypeChange = (event: ChangeEvent<HTMLInputElement>) => {
     console.log('handleClientTypeChange');
     setClientType(event.target.value as 'single' | 'multiple');
+  };
+
+  // handle import name change
+  const handleImportNameChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setSelectedImportName(event.target.value);
   };
 
   // handle progress bar
@@ -62,14 +100,20 @@ const DocumentUploadModal: React.FC = () => {
           </h1>
           <div className="flex items-center">
             <select
-              className="select-box-2"
+              className=" select-box"
               defaultValue=""
-              aria-label="Select Client"
+              onChange={handleImportNameChange}
+              style={{
+                fontSize: '12px',
+                fontWeight: 'normal',
+                height: '35px',
+                color: '#1f3f6c',
+              }}
             >
               <option value="" disabled hidden>
                 Select Client
               </option>
-              {importOptions.map((item) => (
+              {clientOptions.map((item) => (
                 <option key={item.id} value={item.label}>
                   {item.label}
                 </option>
@@ -108,7 +152,7 @@ const DocumentUploadModal: React.FC = () => {
 
   return (
     <div className="p-5" id="my-modal">
-      <div className="relative w-full pb-10 mx-auto bg-white border shadow-lg rounded-2xl">
+      <div className="relative w-full pb-10 bg-white border shadow-lg rounded-2xl">
         <div className="">
           <div className="pt-5 pl-5">
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#1f3f6c]">
@@ -131,7 +175,7 @@ const DocumentUploadModal: React.FC = () => {
           <span className="pb-3 text-2xl font-bold leading-6 border-b text-[#1f3f6c]">
             Document Upload
           </span>
-          <div className="pt-5"></div>
+          <div className="pt-6"></div>
           {/* 12 columns */}
           <div className="grid grid-cols-12 mt-4">
             {/* 1 space */}
@@ -139,43 +183,34 @@ const DocumentUploadModal: React.FC = () => {
             {/* 6 spaces */}
 
             <div className="col-span-10 pr-6 md:col-span-6">
-              <div className="space-y-4">
-                <div>
+              <div className="">
+                <div className="pb-4">
                   <select
                     className="font-extrabold select-box"
                     defaultValue=""
                     style={{
-                      fontSize: '0.8rem',
+                      fontSize: '12px',
                       fontWeight: 'bold',
+                      height: '35px',
                       color: '#1f3f6c',
                     }}
                   >
                     <option value="" disabled hidden>
                       Select Import Name:
                     </option>
-                    <option value="import_name_1" className="text-lg">
-                      Import name #1
-                    </option>
-                    <option value="import_name_2" className="text-lg">
-                      Import name #2
-                    </option>
-                    <option value="import_name_3" className="text-lg">
-                      Import name #3
-                    </option>
-                    <option value="import_name_4" className="text-lg">
-                      Import name #4
-                    </option>
-                    <option value="import_name_5" className="text-lg">
-                      Import name #5
-                    </option>
+                    {importOptions.map((item) => (
+                      <option key={item.id} value={item.label}>
+                        {item.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
-                <div className="w-3/5 border-t border-b"></div>
+                <div className="w-3/5 border-t border-b border-gray-300"></div>
                 <div className="text-left">
-                  <label className="text-xs font-bold text-[#1f3f6c]">
+                  <span className="text-xs font-bold text-[#1f3f6c]">
                     Select a manifest that you'd like to import
-                  </label>
-                  <div className="py-1.5">
+                  </span>
+                  <div className="pt-1.5">
                     <FileUploadArea
                       onFileSelect={handleFileSelect}
                       onProgress={handleProgress}
@@ -186,41 +221,43 @@ const DocumentUploadModal: React.FC = () => {
 
               <div>
                 {fileData && (
-                  <div className="flex items-center justify-between mt-4 border-t border-b">
+                  <div className="flex items-center justify-between mt-2 border-t border-b">
                     <div className="flex items-center flex-1 gap-4">
-                      <span className="p-3">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="30px"
-                          height="50px"
-                          viewBox="0 0 100 120"
-                          fill="none"
-                        >
-                          <rect
-                            x="10"
-                            y="10"
-                            width="80"
-                            height="100"
-                            fill="#F59E0B"
-                          />
+                      <span className="p-2">
+                        <div>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20px"
+                            height="33.334px"
+                            viewBox="0 0 100 120"
+                            fill="none"
+                          >
+                            <rect
+                              x="10"
+                              y="10"
+                              width="80"
+                              height="100"
+                              fill="#F59E0B"
+                            />
 
-                          <polygon points="70,10 90,10 90,30" fill="white" />
+                            <polygon points="70,10 90,10 90,30" fill="white" />
 
-                          <rect
-                            x="30.0"
-                            y="70"
-                            width="40"
-                            height="6"
-                            fill="#FFFFFF"
-                          />
-                          <rect
-                            x="30.0"
-                            y="85"
-                            width="40"
-                            height="6"
-                            fill="#FFFFFF"
-                          />
-                        </svg>
+                            <rect
+                              x="30.0"
+                              y="70"
+                              width="40"
+                              height="6"
+                              fill="#FFFFFF"
+                            />
+                            <rect
+                              x="30.0"
+                              y="85"
+                              width="40"
+                              height="6"
+                              fill="#FFFFFF"
+                            />
+                          </svg>
+                        </div>
                       </span>
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
@@ -232,7 +269,7 @@ const DocumentUploadModal: React.FC = () => {
                           </span>
                         </div>
                         {fileProgress > 0 && (
-                          <div className="w-full h-2 mt-2 ">
+                          <div className="w-full h-1.5 mt-0.5 mr-2 ">
                             <div
                               className="h-1/2 bg-[#F59E0B]"
                               style={{ width: `${fileProgress}%` }}
@@ -244,14 +281,14 @@ const DocumentUploadModal: React.FC = () => {
                   </div>
                 )}
               </div>
-              <div className="pb-4 text-left">
-                <div className="w-1/2 pt-4 border-t border-b"></div>
-                <h1 className="pt-2 text-sm font-extrabold text-[#1f3f6c]">
+              <div className="pt-4 pb-2 text-left">
+                <div className="w-3/5 border-t border-b border-gray-300"></div>
+                <h1 className="pt-2 text-sm font-bold text-[#1f3f6c]">
                   Elapse Data Checking:
                 </h1>
-                <h1 className="pt-2 text-sm font-semibold">
+                <h1 className="pt-2 text-xs font-semibold">
                   {fileProgress === 100 ? (
-                    <span className="font-bold text-green-400">
+                    <span className="font-bold text-green-500">
                       No Elapsed Dates!
                     </span>
                   ) : (
@@ -259,7 +296,8 @@ const DocumentUploadModal: React.FC = () => {
                   )}
                 </h1>
               </div>
-              <div className="w-1/2 border-t border-b"></div>
+              <div className="w-3/5 border-t border-b"></div>
+              <ToleranceWindow isChecked={initialIsChecked} />
             </div>
             <div className="xs:col-span-1 md:hidden"></div>
             <div className="xs:col-span-1 md:hidden"></div>
@@ -271,8 +309,8 @@ const DocumentUploadModal: React.FC = () => {
                 <div className="text-left border-gray-300">
                   <SocialDistancingSchedule />
                   <LocationChecking />
-                  <div className="pb-4 text-left border-t border-gray-300">
-                    <h1 className="pt-4 text-sm font-extrabold text-[#1f3f6c]">
+                  <div className="pb-2 text-left border-t border-gray-300">
+                    <h1 className="py-2 text-xs font-bold text-[#1f3f6c]">
                       Client:
                     </h1>
                     <div className="flex items-center justify-start gap-2 ">
@@ -289,17 +327,19 @@ const DocumentUploadModal: React.FC = () => {
               </div>
             </div>
             <div className="col-span-1"></div>
-            <div className="col-span-12 pt-4 text-center">
-              <span className="pb-4 font-extrabold text-[#1f3f6c]">
+            <div className="col-span-12 pt-10 text-center">
+              <span className="pb-4 font-bold text-base text-[#1f3f6c]">
                 Data in the import file is correct. Please press Continue to
                 import.
               </span>
-              <div className="grid grid-cols-12 pt-4 text-base font-bold">
-                <div className="col-span-3"></div>
-                <button className="col-span-3 py-3 ml-10 mr-2 text-xs text-gray-300 rounded-lg bg-[#1f3f6c]">
+              <div className="flex items-center justify-center gap-5 pt-5 pb-6">
+                <button
+                  onClick={handleSubmit}
+                  className="py-3 w-1/4 text-xs font-bold text-gray-300 border-2 rounded-lg bg-[#1f3f6c]"
+                >
                   Continue Import
                 </button>
-                <button className="col-span-3 py-3 ml-2 mr-10 text-xs text-yellow-500 bg-white border-2 border-yellow-500 rounded-lg">
+                <button className="w-1/4 py-3 text-xs font-bold text-yellow-500 bg-white border-2 border-yellow-500 rounded-lg">
                   Cancel
                 </button>
                 <div className="col-span-3"></div>
