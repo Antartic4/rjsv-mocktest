@@ -334,7 +334,7 @@ const DocumentUploadModal: React.FC = () => {
               </span>
               <div className="flex items-center justify-center gap-5 pt-5 pb-6">
                 <button
-                  onClick={handleSubmit}
+                  // onClick={handleSubmit}
                   className="py-3 w-1/4 text-xs font-bold text-gray-300 border-2 rounded-lg bg-[#1f3f6c]"
                 >
                   Continue Import
