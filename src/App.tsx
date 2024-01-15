@@ -5,7 +5,6 @@ import DocumentUploadModal from './components/DocumentUpload';
 const App: React.FC = () => {
   return (
     <html className="App bg-[#9c9c9c] ">
-      {/* Note: The head tags should typically be in the index.html file of a React app */}
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
