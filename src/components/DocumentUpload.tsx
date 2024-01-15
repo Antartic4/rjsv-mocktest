@@ -13,21 +13,6 @@ const DocumentUploadModal: React.FC = () => {
   const [clientType, setClientType] = useState<'single' | 'multiple'>('single');
   const [formData, setFormData] = useState(new FormData());
   const [selectedTime, setSelectedTime] = useState('');
-  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
-  const timeInputRef = useRef<HTMLInputElement>(null);
-
-  const openTimePickerModal = () => {
-    setIsTimePickerOpen(true);
-  };
-
-  const closeTimePickerModal = () => {
-    setIsTimePickerOpen(false);
-  };
-
-  const handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedTime(event.target.value);
-    closeTimePickerModal();
-  };
 
   // handlers
   // file change
@@ -202,7 +187,7 @@ const DocumentUploadModal: React.FC = () => {
                   strokeLinejoin="round"
                   d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                 />
-              </svg>{' '}
+              </svg>
             </div>
           </div>
         </div>
@@ -457,7 +442,7 @@ const DocumentUploadModal: React.FC = () => {
                     </h1>
                   </div>
                   <div className="border-l border-r border-gray-300"></div>
-                  <div className="flex gap-1" onClick={openTimePickerModal}>
+                  <div className="flex gap-1">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
