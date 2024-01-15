@@ -13,6 +13,21 @@ const DocumentUploadModal: React.FC = () => {
   const [clientType, setClientType] = useState<'single' | 'multiple'>('single');
   const [formData, setFormData] = useState(new FormData());
   const [selectedTime, setSelectedTime] = useState('');
+  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
+  const timeInputRef = useRef<HTMLInputElement>(null);
+
+  const openTimePickerModal = () => {
+    setIsTimePickerOpen(true);
+  };
+
+  const closeTimePickerModal = () => {
+    setIsTimePickerOpen(false);
+  };
+
+  const handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedTime(event.target.value);
+    closeTimePickerModal();
+  };
 
   // handlers
   // file change
@@ -133,48 +148,6 @@ const DocumentUploadModal: React.FC = () => {
     setClientType(event.target.value as 'single' | 'multiple');
   };
 
-  const TimePicker: React.FC = () => {
-    const [time, setTime] = useState<string>('');
-    const timeInputRef = useRef<HTMLInputElement>(null);
-
-    const handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setTime(event.target.value);
-    };
-
-    const openTimePicker = () => {
-      timeInputRef.current?.click(); // Triggers the hidden input
-    };
-
-    return (
-      <div>
-        <input
-          type="time"
-          ref={timeInputRef}
-          style={{ display: 'none' }}
-          value={time}
-          onChange={handleTimeChange}
-        />
-        <button onClick={openTimePicker} className="svg-button">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
-        </button>
-        {time && <p>Selected Time: {time}</p>}
-      </div>
-    );
-  };
-
   // rendering the Clients section on whether button was pressed
   // (well, made it a formula but I just use it with params 1 and 4.)
 
@@ -198,40 +171,38 @@ const DocumentUploadModal: React.FC = () => {
               <option value="" disabled hidden>
                 Select Client
               </option>
-              <option
-                className="p-2 text-base font-bold text-center"
-                value="Client-1"
-              >
+              <option className="p-2 text-base font-bold" value="Client-1">
                 Client-1
               </option>
-              <option
-                className="p-2 text-base font-bold text-center"
-                value="Client-2"
-              >
+              <option className="p-2 text-base font-bold" value="Client-2">
                 Client-2
               </option>
-              <option
-                className="p-2 text-base font-bold text-center"
-                value="Client-3"
-              >
+              <option className="p-2 text-base font-bold" value="Client-3">
                 Client-3
               </option>
-              <option
-                className="p-2 text-base font-bold text-center"
-                value="Client-4"
-              >
+              <option className="p-2 text-base font-bold" value="Client-4">
                 Client-4
               </option>
-              <option
-                className="p-2 text-base font-bold text-center"
-                value="Client-5"
-              >
+              <option className="p-2 text-base font-bold" value="Client-5">
                 Client-5
               </option>
             </select>
 
             <div className="ml-1">
-              <TimePicker />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>{' '}
             </div>
           </div>
         </div>
@@ -486,23 +457,21 @@ const DocumentUploadModal: React.FC = () => {
                     </h1>
                   </div>
                   <div className="border-l border-r border-gray-300"></div>
-                  <div className="flex gap-1">
-                    <div>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        className="w-6 h-6"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                        />
-                      </svg>
-                    </div>
+                  <div className="flex gap-1" onClick={openTimePickerModal}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                      />
+                    </svg>
                     <h1 className="text-[#1f3f6c] text-sm">
                       Select Tolerance Level
                     </h1>
